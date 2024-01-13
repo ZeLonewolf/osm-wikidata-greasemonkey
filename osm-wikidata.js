@@ -17,7 +17,7 @@
         console.log(`Fetching label and link for QID: ${qid}`);
         GM_xmlhttpRequest({
             method: "GET",
-            url: `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks&languages=en&sitefilter=enwiki&format=json`,
+            url: `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|descriptions&languages=en&sitefilter=enwiki&format=json`,
             onload: function(response) {
                 if (response.readyState !== "complete") {
                     console.error(`Request not complete for QID: ${qid}, Ready State: ${response.readyState}`);
@@ -30,7 +30,9 @@
                     if (responseData.entities && responseData.entities[qid]) {
                         const entity = responseData.entities[qid];
                         const label = entity.labels.en && entity.labels.en.value;
-                        displayLabelAndLink(label, entity.sitelinks.enwiki.title, element);
+                        const description = entity.descriptions.en && entity.descriptions.en.value;
+                        console.log(`Description: ${description}`); // Log the description
+                        displayLabelAndLink(label, description, entity.sitelinks.enwiki.title, element);
                     } else {
                         console.log(`No label or sitelink found for QID: ${qid}`);
                     }
@@ -44,7 +46,7 @@
         });
     }
 
-    function displayLabelAndLink(label, wikipediaLink, element) {
+    function displayLabelAndLink(label, description, wikipediaLink, element) {
         // Create a container for the label and QID
         const labelContainer = document.createElement('div');
 
@@ -85,6 +87,12 @@
         const wikiText = document.createElement('span');
         wikiText.innerHTML = `<a href="${getWikipediaUrl(wikipediaLink)}">${wikipediaLink}</a>`;
         newCell.appendChild(wikiText);
+
+        const wikiDescription = document.createElement('span');
+        wikiDescription.style.fontSize = '80%'; // Smaller text for QID
+        wikiDescription.style.display = 'block'; // New line for QID
+        wikiDescription.innerText = description;
+        newCell.appendChild(wikiDescription);
 
         // Insert the new row after the parent row
         parentRow.parentNode.insertBefore(newRow, parentRow.nextSibling);
