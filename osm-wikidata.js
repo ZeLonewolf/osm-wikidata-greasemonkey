@@ -11,10 +11,7 @@
 (function() {
     'use strict';
 
-    console.log("Wikidata QID Augmentation script with Wikipedia links started");
-
     function fetchLabelAndLink(qid, element) {
-        console.log(`Fetching label and link for QID: ${qid}`);
         GM_xmlhttpRequest({
             method: "GET",
             url: `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|descriptions&languages=en&sitefilter=enwiki&format=json`,
@@ -31,7 +28,6 @@
                         const entity = responseData.entities[qid];
                         const label = entity.labels.en && entity.labels.en.value;
                         const description = entity.descriptions.en && entity.descriptions.en.value;
-                        console.log(`Description: ${description}`); // Log the description
                         displayLabelAndLink(label, description, entity.sitelinks.enwiki.title, element);
                     } else {
                         console.log(`No label or sitelink found for QID: ${qid}`);
@@ -100,7 +96,6 @@
 
     // Find all QID links and process them
     const qidLinks = document.querySelectorAll('a[href*="//www.wikidata.org/entity/Q"]');
-    console.log(`Found ${qidLinks.length} QID links`);
     qidLinks.forEach(link => {
         const qidMatch = link.href.match(/Q\d+/);
         if (qidMatch) {
