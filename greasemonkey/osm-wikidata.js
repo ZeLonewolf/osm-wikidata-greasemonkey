@@ -17,7 +17,7 @@
         console.log(`Fetching label and link for QID: ${qid}`);
         GM_xmlhttpRequest({
             method: "GET",
-            url: `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|descriptions&languages=en&sitefilter=enwiki&format=json`,
+            url: `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|claims|descriptions&languages=en&sitefilter=enwiki&format=json`,
             onload: function(response) {
                 if (response.readyState !== "complete") {
                     console.error(`Request not complete for QID: ${qid}, Ready State: ${response.readyState}`);
@@ -32,7 +32,8 @@
                         const label = entity.labels.en && entity.labels.en.value;
                         const description = entity.descriptions.en && entity.descriptions.en.value;
                         console.log(`Description: ${description}`); // Log the description
-                        displayLabelAndLink(label, description, entity.sitelinks.enwiki.title, element);
+                        const hasIcon = entity.claims["P8972"] || entity.claims["P154"];
+                        displayLabelAndLink(qid, label, description, hasIcon, entity.sitelinks.enwiki.title, element);
                     } else {
                         console.log(`No label or sitelink found for QID: ${qid}`);
                     }
@@ -46,7 +47,7 @@
         });
     }
 
-    function displayLabelAndLink(label, description, wikipediaLink, element) {
+    function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, element) {
         // Create a container for the label and QID
         const labelContainer = document.createElement('div');
 
@@ -78,12 +79,24 @@
         newCell.style.backgroundColor = '#eeeeff';
         newRow.appendChild(newCell);
 
+        if(hasIcon) {
+            const brandIcon = document.createElement('img');
+            brandIcon.src = `https://hub.toolforge.org/${qid}?p=P8972,P154&w=32&h=32`;
+            brandIcon.style.height = 32;
+            brandIcon.style.display = 'block'; // New line for QID
+            brandIcon.style.float = 'left'; // New line for QID
+            brandIcon.style.marginRight = '8px';
+            newCell.appendChild(brandIcon);
+        }
+
         // Create and add the Wikipedia icon
-        const wikiIcon = document.createElement('img');
-        wikiIcon.src = 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Wikipedia_app_icon.jpg';
-        wikiIcon.style.height = '20px'; // Adjust size as needed
-        wikiIcon.style.marginRight = '4px';
-        newCell.appendChild(wikiIcon);
+        if(!hasIcon) {
+            const wikiIcon = document.createElement('img');
+            wikiIcon.src = 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Wikipedia_app_icon.jpg';
+            wikiIcon.style.height = '20px'; // Adjust size as needed
+            wikiIcon.style.marginRight = '4px';
+            newCell.appendChild(wikiIcon);
+        }
 
         const wikiText = document.createElement('span');
         wikiText.innerHTML = `<a href="${getWikipediaUrl(wikipediaLink)}">${wikipediaLink}</a>`;
