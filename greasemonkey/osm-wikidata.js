@@ -9,6 +9,7 @@
 // ==/UserScript==
 
 const lang = navigator.language.split("\-")[0];
+const FIND_QID = 'a[href*="//www.wikidata.org/entity/Q"]';
 
 (function() {
     'use strict';
@@ -17,7 +18,7 @@ const lang = navigator.language.split("\-")[0];
 
 
     // Find all QID links and process them
-    const qidLinks = document.querySelectorAll('a[href*="//www.wikidata.org/entity/Q"]');
+    const qidLinks = document.querySelectorAll(FIND_QID);
     console.log(`Found ${qidLinks.length} QID links`);
     qidLinks.forEach(link => {
         const qidMatch = link.href.match(/Q\d+/);
@@ -140,4 +141,43 @@ function getWikipediaUrl(title) {
     var url = 'https://en.wikipedia.org/wiki/' + encodeURIComponent(formattedTitle);
 
     return url;
+}
+
+// Function to handle what happens when mutations are observed
+function handleMutations(mutations, observer) {
+    for (let mutation of mutations) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            // Check and process new nodes here, similar to how you process them on page load
+            processNewNodes(mutation.addedNodes);
+        }
+    }
+}
+
+// Create the observer
+const observer = new MutationObserver(handleMutations);
+
+// Observer options
+const config = { childList: true, subtree: true };
+
+// Start observing a target node
+const targetNode = document.querySelector('#sidebar_content');
+if (targetNode) {
+    observer.observe(targetNode, config);
+}
+
+function processNewNodes(addedNodes) {
+    addedNodes.forEach(node => {
+        // Check if the node is an element node (and not text node, etc.)
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            // Find all the Wikidata QID links within the node
+            const wikidataLinks = node.querySelectorAll(FIND_QID);
+            wikidataLinks.forEach(wikidataLink => {
+                const qidMatch = wikidataLink.href.match(/Q\d+/);
+                if (qidMatch) {
+                    const qid = qidMatch[0];
+                    fetchLabelAndLink(qid, wikidataLink);
+                }
+            });
+        }
+    });
 }
