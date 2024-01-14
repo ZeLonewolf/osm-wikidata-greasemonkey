@@ -44,18 +44,7 @@ function fetchLabelAndLink(qid, element) {
             }
 
             try {
-                // Directly use responseText as an object
-                const responseData = response.responseText;
-                if (responseData.entities && responseData.entities[qid]) {
-                    const entity = responseData.entities[qid];
-                    const label = entity.labels.en && entity.labels[lang].value;
-                    const description = entity.descriptions.en && entity.descriptions[lang].value;
-                    console.log(`Description: ${description}`); // Log the description
-                    const hasIcon = entity.claims["P8972"] || entity.claims["P154"];
-                    displayLabelAndLink(qid, label, description, hasIcon, entity.sitelinks[`${lang}wiki`]?.title, element);
-                } else {
-                    console.log(`No label or sitelink found for QID: ${qid}`);
-                }
+                processResponseData(response.responseText);
             } catch (error) {
                 console.error(`Error processing response for QID: ${qid}`, error, 'Response:', response.responseText);
             }
@@ -64,6 +53,19 @@ function fetchLabelAndLink(qid, element) {
             console.error(`Error fetching label and link for QID: ${qid}`, error);
         }
     });
+}
+
+function processResponseData(responseData) {
+    if (responseData.entities && responseData.entities[qid]) {
+        const entity = responseData.entities[qid];
+        const label = entity.labels.en && entity.labels[lang].value;
+        const description = entity.descriptions.en && entity.descriptions[lang].value;
+        console.log(`Description: ${description}`); // Log the description
+        const hasIcon = entity.claims["P8972"] || entity.claims["P154"];
+        displayLabelAndLink(qid, label, description, hasIcon, entity.sitelinks[`${lang}wiki`]?.title, element);
+    } else {
+        console.log(`No label or sitelink found for QID: ${qid}`);
+    }
 }
 
 function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, element) {
@@ -157,7 +159,10 @@ function handleMutations(mutations, observer) {
 const observer = new MutationObserver(handleMutations);
 
 // Observer options
-const config = { childList: true, subtree: true };
+const config = {
+    childList: true,
+    subtree: true
+};
 
 // Start observing a target node
 const targetNode = document.querySelector('#sidebar_content');
