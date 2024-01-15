@@ -9,14 +9,6 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "zelonewolf_human_readable_wikidata"
-    },
-    "gecko_android": {
-      "id": "zelonewolf_human_readable_wikidata_android"
-    }
-  },
   "permissions": [],
   "background": {
     "service_worker": "service_worker.js"
