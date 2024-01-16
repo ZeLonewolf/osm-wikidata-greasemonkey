@@ -131,7 +131,10 @@ function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, el
 
     if (wikipediaLink) {
         const wikiText = document.createElement('span');
-        wikiText.innerHTML = `<a href="${getWikipediaUrl(wikipediaLink)}">${wikipediaLink}</a>`;
+        const wikiLink = document.createElement('a');
+        wikiLink.href = getWikipediaUrl(wikipediaLink);
+        wikiLink.textContent = wikipediaLink;
+        wikiText.appendChild(wikiLink);
         newCell.appendChild(wikiText);
     }
 
