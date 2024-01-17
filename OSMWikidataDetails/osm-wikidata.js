@@ -61,8 +61,8 @@ function handleMutations(mutations, observer) {
 function processResponseData(responseData, qid, lang, element) {
     if (responseData.entities && responseData.entities[qid]) {
         const entity = responseData.entities[qid];
-        const label = entity.labels.en && entity.labels[lang].value;
-        const description = entity.descriptions.en && entity.descriptions[lang].value;
+        const label = entity.labels[lang] && entity.labels[lang].value;
+        const description = entity.descriptions[lang] && entity.descriptions[lang].value;
         const hasIcon = entity.claims["P8972"] || entity.claims["P154"];
         displayLabelAndLink(qid, label, description, hasIcon, entity.sitelinks[`${lang}wiki`]?.title, element);
     } else {
