@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener(
     });
 
 function fetchLabelAndLink(sendResponse, qid, lang, element) {
-    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|claims|descriptions&languages=${lang}&sitefilter=${lang}wiki&format=json`;
+    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|claims|descriptions&languages=${lang}|en&sitefilter=${lang}wiki&format=json`;
     fetch(url)
         .then(response => {
             if (!response.ok) {

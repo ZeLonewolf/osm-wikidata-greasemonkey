@@ -20,7 +20,7 @@ function processLinks(links) {
 }
 
 function fetchLabelAndLink(qid, lang, element) {
-    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|claims|descriptions&languages=${lang}&sitefilter=${lang}wiki&format=json`;
+    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|claims|descriptions&languages=${lang}|en&sitefilter=${lang}wiki&format=json`;
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -66,15 +66,21 @@ function handleMutations(mutations, observer) {
         }
     }
 }
+
 function processResponseData(responseData, qid, lang, element) {
     if (responseData.entities && responseData.entities[qid]) {
         const entity = responseData.entities[qid];
-        const label = entity.labels[lang] && entity.labels[lang].value;
-        const description = entity.descriptions[lang] && entity.descriptions[lang].value;
+
+        // Try to get the label in the requested language, fallback to English
+        const label = entity.labels[lang]?.value || entity.labels['en']?.value;
+
+        // Try to get the description in the requested language, fallback to English
+        const description = entity.descriptions[lang]?.value || entity.descriptions['en']?.value;
+
         const hasIcon = entity.claims["P8972"] || entity.claims["P154"];
         displayLabelAndLink(qid, label, description, hasIcon, entity.sitelinks[`${lang}wiki`]?.title, element);
     } else {
-        console.log(`No label or sitelink found for QID: ${qid}`);
+        console.log(`No data found for QID: ${qid}`);
     }
 }
 

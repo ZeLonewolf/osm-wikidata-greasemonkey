@@ -36,7 +36,7 @@ function fetchLabelAndLink(qid, element) {
     console.log(`Fetching label and link for QID: ${qid}`);
     GM_xmlhttpRequest({
         method: "GET",
-        url: `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|claims|descriptions&languages=en&sitefilter=${lang}wiki&format=json`,
+        url: `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels|sitelinks|claims|descriptions&languages=${lang}&sitefilter=${lang}wiki&format=json`,
         onload: function(response) {
             if (response.readyState !== "complete") {
                 console.error(`Request not complete for QID: ${qid}, Ready State: ${response.readyState}`);
