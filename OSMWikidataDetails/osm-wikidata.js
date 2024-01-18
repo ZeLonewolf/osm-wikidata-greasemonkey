@@ -110,8 +110,8 @@ function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, el
 
     if (hasIcon) {
         const brandIcon = document.createElement('img');
-        brandIcon.src = `https://hub.toolforge.org/${qid}?p=P8972,P154&w=32&h=32`;
-        brandIcon.style.height = 32;
+        brandIcon.src = `https://hub.toolforge.org/${qid}?p=P8972,P154&h=32`;
+        brandIcon.style.height = `32px`;
         brandIcon.style.display = 'block'; // New line for QID
         brandIcon.style.float = 'left'; // New line for QID
         brandIcon.style.marginRight = '8px';
