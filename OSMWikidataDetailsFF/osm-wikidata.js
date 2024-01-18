@@ -75,7 +75,7 @@ function processResponseData(responseData, qid, lang, element) {
         const label = entity.labels[lang]?.value || entity.labels['en']?.value;
 
         // Try to get the description in the requested language, fallback to English
-        const description = entity.descriptions[lang]?.value || entity.descriptions['en']?.value;
+        const description = entity.descriptions[lang]?.value ?? entity.descriptions['en']?.value ?? '';
 
         const hasIcon = entity.claims["P8972"] || entity.claims["P154"];
         displayLabelAndLink(qid, label, description, hasIcon, entity.sitelinks[`${lang}wiki`]?.title, element);
