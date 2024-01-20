@@ -91,10 +91,27 @@ function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, el
 
     // Create and style the QID span
     const qidSpan = document.createElement('span');
-    qidSpan.innerHTML = `[<a class="wdplugin" href="${element.href}">${qid}</a>]`;
     qidSpan.style.fontSize = '70%'; // Smaller text for QID
     qidSpan.style.display = 'block'; // New line for QID
 
+    // Create text node for the opening bracket
+    const openingBracket = document.createTextNode('[');
+
+    // Create the anchor element inside the QID span
+    const qidAnchor = document.createElement('a');
+    qidAnchor.className = 'wdplugin';
+    qidAnchor.href = element.href;
+    qidAnchor.textContent = qid; // Safely set the text content
+
+    // Create text node for the closing bracket
+    const closingBracket = document.createTextNode(']');
+
+    // Append the opening bracket, anchor, and closing bracket to the span
+    qidSpan.appendChild(openingBracket);
+    qidSpan.appendChild(qidAnchor);
+    qidSpan.appendChild(closingBracket);
+
+    // Insert the QID span after the element
     element.insertAdjacentElement('afterend', qidSpan);
     element.insertAdjacentElement('afterend', document.createElement('br'));
 
