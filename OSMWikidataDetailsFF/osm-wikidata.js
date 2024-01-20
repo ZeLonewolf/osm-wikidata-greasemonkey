@@ -1,5 +1,5 @@
 const lang = navigator.language.split("\-")[0];
-const FIND_QID = 'a[href*="//www.wikidata.org/entity/Q"]';
+const FIND_QID = 'a[href*="//www.wikidata.org/entity/Q"]:not(.wdplugin)';
 
 (function() {
     'use strict';
@@ -85,26 +85,22 @@ function processResponseData(responseData, qid, lang, element) {
 }
 
 function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, element) {
-    // Create a container for the label and QID
-    const labelContainer = document.createElement('div');
 
-    // Create and style the label span
-    const labelSpan = document.createElement('span');
-    labelSpan.textContent = label;
-    labelContainer.appendChild(labelSpan);
+    // Replace original QID with label
+    element.textContent = label;
 
     // Create and style the QID span
     const qidSpan = document.createElement('span');
-    qidSpan.textContent = `[${element.textContent}]`;
+    qidSpan.innerHTML = `[<a class="wdplugin" href="${element.href}">${qid}</a>]`;
     qidSpan.style.fontSize = '70%'; // Smaller text for QID
     qidSpan.style.display = 'block'; // New line for QID
 
-    // Append the QID below the label
-    labelContainer.appendChild(qidSpan);
+    element.insertAdjacentElement('afterend', qidSpan);
+    element.insertAdjacentElement('afterend', document.createElement('br'));
 
-    // Replace the original link text with the label container
-    element.textContent = ''; // Clear the existing content
-    element.appendChild(labelContainer);
+    if(!hasIcon && !wikipediaLink && !description) {
+        return;
+    }
 
     // Find the parent row of the current cell
     const parentRow = element.closest('tr');
@@ -137,10 +133,7 @@ function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, el
 
     if (wikipediaLink) {
         const wikiText = document.createElement('span');
-        const wikiLink = document.createElement('a');
-        wikiLink.href = getWikipediaUrl(wikipediaLink);
-        wikiLink.textContent = wikipediaLink;
-        wikiText.appendChild(wikiLink);
+        wikiText.innerHTML = `<a href="${getWikipediaUrl(wikipediaLink)}">${wikipediaLink}</a>`;
         newCell.appendChild(wikiText);
     }
 
