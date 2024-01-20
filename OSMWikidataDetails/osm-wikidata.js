@@ -1,5 +1,5 @@
 const lang = navigator.language.split("\-")[0];
-const FIND_QID = 'a[href*="//www.wikidata.org/entity/Q"]';
+const FIND_QID = 'a[href*="//www.wikidata.org/entity/Q"]:not(.wdplugin)';
 
 (function() {
     'use strict';
@@ -77,26 +77,18 @@ function processResponseData(responseData, qid, lang, element) {
 }
 
 function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, element) {
-    // Create a container for the label and QID
-    const labelContainer = document.createElement('div');
 
-    // Create and style the label span
-    const labelSpan = document.createElement('span');
-    labelSpan.textContent = label;
-    labelContainer.appendChild(labelSpan);
+    // Replace original QID with label
+    element.textContent = label;
 
     // Create and style the QID span
     const qidSpan = document.createElement('span');
-    qidSpan.textContent = `[${element.textContent}]`;
+    qidSpan.innerHTML = `[<a class="wdplugin" href="${element.href}">${qid}</a>]`;
     qidSpan.style.fontSize = '70%'; // Smaller text for QID
     qidSpan.style.display = 'block'; // New line for QID
 
-    // Append the QID below the label
-    labelContainer.appendChild(qidSpan);
-
-    // Replace the original link text with the label container
-    element.textContent = ''; // Clear the existing content
-    element.appendChild(labelContainer);
+    element.insertAdjacentElement('afterend', qidSpan);
+    element.insertAdjacentElement('afterend', document.createElement('br'));
 
     if(!hasIcon && !wikipediaLink && !description) {
         return;
