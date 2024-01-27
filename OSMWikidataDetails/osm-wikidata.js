@@ -121,36 +121,44 @@ function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, el
     newCell.style.backgroundColor = '#eeeeff';
     newRow.appendChild(newCell);
 
+    // Create a div to serve as a flex container
+    const flexContainer = document.createElement('div');
+    flexContainer.style.display = 'flex';
+    flexContainer.style.alignItems = 'flex-start'; // Align items to the top
+    flexContainer.style.flexWrap = 'wrap'; // Allow wrapping when necessary
+    newCell.appendChild(flexContainer);
+
     if (hasIcon) {
         const brandIcon = document.createElement('img');
         brandIcon.src = `https://hub.toolforge.org/${qid}?p=P8972,P154,P14&h=32&w=128`;
         brandIcon.style.height = `32px`;
-        brandIcon.style.display = 'block'; // New line for QID
-        brandIcon.style.float = 'left'; // New line for QID
         brandIcon.style.marginRight = '8px';
-        newCell.appendChild(brandIcon);
+        brandIcon.style.flexShrink = '0'; // Icon should not shrink
+        brandIcon.style.flexGrow = '0'; // Icon should not grow
+        brandIcon.style.flexBasis = 'auto'; // Icon base size
+        flexContainer.appendChild(brandIcon); // Append the icon to the flex container
     }
 
-    // Create and add the Wikipedia icon
-    if (!hasIcon && wikipediaLink) {
-        const wikiIcon = document.createElement('img');
-        wikiIcon.src = 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Wikipedia_app_icon.jpg';
-        wikiIcon.style.height = '20px'; // Adjust size as needed
-        wikiIcon.style.marginRight = '4px';
-        newCell.appendChild(wikiIcon);
-    }
+    // Create a div for text that stacks vertically
+    const textStack = document.createElement('div');
+    textStack.style.flexGrow = '1'; // Text container can grow if there is space
+    textStack.style.flexShrink = '0'; // Text container should not shrink
+    textStack.style.flexBasis = '50%'; // Text takes up at least 50% of the container
+    flexContainer.appendChild(textStack); // Append the text stack to the flex container
 
     if (wikipediaLink) {
-        const wikiText = document.createElement('span');
-        wikiText.innerHTML = `<a href="${getWikipediaUrl(wikipediaLink)}">${wikipediaLink}</a>`;
-        newCell.appendChild(wikiText);
+        const wikiText = document.createElement('a');
+        wikiText.href = getWikipediaUrl(wikipediaLink);
+        wikiText.textContent = wikipediaLink; // Using textContent for security and simplicity
+        wikiText.style.display = 'block'; // Make the link display as block to fill width
+        textStack.appendChild(wikiText); // Append to the text stack
     }
 
-    const wikiDescription = document.createElement('span');
+    const wikiDescription = document.createElement('div');
     wikiDescription.style.fontSize = '80%'; // Smaller text for QID
-    wikiDescription.style.display = 'block'; // New line for QID
-    wikiDescription.innerText = description;
-    newCell.appendChild(wikiDescription);
+    wikiDescription.textContent = description; // Using textContent for security and simplicity
+    wikiDescription.style.display = 'block'; // Make the description display as block
+    textStack.appendChild(wikiDescription); // Append to the text stack
 
     // Insert the new row after the parent row
     parentRow.parentNode.insertBefore(newRow, parentRow.nextSibling);
