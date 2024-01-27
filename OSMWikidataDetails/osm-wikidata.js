@@ -69,7 +69,7 @@ function processResponseData(responseData, qid, lang, element) {
         // Try to get the description in the requested language, fallback to English
         const description = entity.descriptions[lang]?.value ?? entity.descriptions['en']?.value ?? '';
 
-        const hasIcon = entity.claims["P8972"] || entity.claims["P154"];
+        const hasIcon = entity.claims["P8972"] || entity.claims["P154"] || entity.claims["P14"];
         displayLabelAndLink(qid, label, description, hasIcon, entity.sitelinks[`${lang}wiki`]?.title, element);
     } else {
         console.log(`No data found for QID: ${qid}`);
@@ -123,7 +123,7 @@ function displayLabelAndLink(qid, label, description, hasIcon, wikipediaLink, el
 
     if (hasIcon) {
         const brandIcon = document.createElement('img');
-        brandIcon.src = `https://hub.toolforge.org/${qid}?p=P8972,P154&h=32&w=128`;
+        brandIcon.src = `https://hub.toolforge.org/${qid}?p=P8972,P154,P14&h=32&w=128`;
         brandIcon.style.height = `32px`;
         brandIcon.style.display = 'block'; // New line for QID
         brandIcon.style.float = 'left'; // New line for QID
